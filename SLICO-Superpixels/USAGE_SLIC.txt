@@ -1,0 +1,67 @@
+
+SLIC class declaration and implementation files are provided along with a MS VC+6 workspace. The files provide the code to perform superpixel segmentation as explained in the paper:
+
+"SLIC Superpixels Compated to State-of-the-art Superpixel Methods",
+Radhakrishna Achanta, Appu Shaji, Kevin Smith, Aurelien Lucchi, Pascal Fua, and Sabine Susstrunk.
+IEEE TPAMI, November2012.
+
+The usage is quite straight forward if one wants to incorporate SLICO in his/her projects. One has to instantiate an object of the SLIC class and call the various methods on it. Here is an example main() file:
+
+====================================================================================================
+NOTE: For commercial use please contact the author Radhakrishna Achanta (firstname.lastname@epfl.ch)
+====================================================================================================
+
+#include <string>
+#include "SLIC.h"
+
+int main()
+{
+	int width(0), height(0);
+	// unsigned int (32 bits) to hold a pixel in ARGB format as follows:
+	// from left to right,
+	// the first 8 bits are for the alpha channel (and are ignored)
+	// the next 8 bits are for the red channel
+	// the next 8 bits are for the green channel
+	// the last 8 bits are for the blue channel
+	unsigned int* pbuff = new UINT[sz];
+	ReadImage(pbuff, width, height);//YOUR own function to read an image into the ARGB format
+
+	//----------------------------------
+	// Initialize parameters
+	//----------------------------------
+	int k = 200;//Desired number of superpixels.
+	double m = 20;//Compactness factor. use a value ranging from 10 to 40 depending on your needs. Default is 10
+	int* klabels = NULL;
+	int numlabels(0);
+	string filename = "yourfilename.jpg";
+	string savepath = "yourpathname";
+	//----------------------------------
+	// Perform SLIC on the image buffer
+	//----------------------------------
+	SLIC segment;
+	segment.PerformSLICO_ForGivenK(pbuff, width, height, klabels, numlabels, k, m);
+	// Alternately one can also use the function PerformSLICO_ForGivenStepSize() for a desired superpixel size
+	//----------------------------------
+	// Save the labels to a text file
+	//----------------------------------
+	segment.SaveSuperpixelLabels(klabels, width, height, filename, savepath);
+	//----------------------------------
+	// Draw boundaries around segments
+	//----------------------------------
+	segment.DrawContoursAroundSegments(pbuff, klabels, width, height, 0xff0000);
+	//----------------------------------
+	// Save the image with segment boundaries.
+	//----------------------------------
+	SaveSegmentedImageFile(pbuff, width, height);//YOUR own function to save an ARGB buffer as an image
+	//----------------------------------
+	// Clean up
+	//----------------------------------
+	if(pbuff) delete [] pbuff;
+	if(klabels) delete [] klabels;
+
+	return 0;
+}
+
+As a disclaimer, the author of the code or EPFL are not responsible for any damages that may result from using this code or the compiled executable. There are no warraties associated with the code or executables.
+
+
