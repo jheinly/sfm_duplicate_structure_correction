@@ -1,2 +1,5 @@
 # MATLAB temporary files.
 *.asv
+
+# Generated figures.
+matlab/figures/
